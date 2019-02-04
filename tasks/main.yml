@@ -11,6 +11,17 @@
   lineinfile: dest=/etc/rc.conf regexp='^knot_config=' line="knot_config={{ knot_install_dir }}/etc/knot/knot.conf"
   when: ansible_os_family == "FreeBSD"
 
+# debian ugly fix
+- file:
+    path: "{{ item }}"
+    owner: "{{ knot_user }}"
+    group: "{{ knot_group }}"
+  with_items:
+      - /var/lib/knot/timers
+      - /var/lib/knot/timers/data.mdb
+      - /var/lib/knot/timers/lock.mdb
+  notify: restart knot
+
 # Configuration
 - name: configure knot
   template: >

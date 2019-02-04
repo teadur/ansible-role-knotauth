@@ -8,10 +8,17 @@
 - name: repository keys (Debian)
   apt_key: url=https://deb.knot-dns.cz/knot/apt.gpg state=present
   when: ansible_distribution == "Debian"
+  
+
 - name: repository (Debian)
   apt_repository: repo="deb https://deb.knot-dns.cz/knot/ {{ ansible_lsb.codename }} main" state=present
-  when: ansible_distribution == "Debian"
-
+  when: ansible_distribution == "Debian" and not knot_latest
+  
+  
+- name: repository (Debian)
+  apt_repository: repo="deb https://deb.knot-dns.cz/knot-latest/ {{ ansible_lsb.codename }} main" state=present
+  when: ansible_distribution == "Debian" and knot_latest
+  
 # Debian Family (Debian, Ubuntu)
 - name: packages (Debian/Ubuntu)
   apt: pkg=knot update_cache=yes state=present
